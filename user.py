@@ -8,43 +8,68 @@ db = Database("test.db")
 class User:
 
   def __init__(self):
+    self._id = ""
     self._username = ""
     self._password = ""
+    self._vaults = []
 
+  @property
+  def id(self):
+    return self._id
+  
+  @id.setter
+  def id(self, id):
+    self._id = id
+  
   @property
   def username(self):
     return self._username
   
-  @property
-  def set_username(self, username):
+  @username.setter
+  def username(self, username):
     self._username = username
   
   @property
   def password(self):
     return self._password
   
-  @property
-  def set_password(self, password):
+  @password.setter
+  def password(self, password):
     self._password = password
+
+  @property
+  def vaults(self):
+    return self._vaults
+  
+  @vaults.setter
+  def vaults(self, vaults):
+   self._vaults = vaults
 
   def register(self, username, password):
     pw_hash = ph.hash(password)
-    db.add_new_user(username, pw_hash)
+    db.add_user(username, pw_hash)
 
   def login(self, username, password):
     try:
-      existingUser = db.get_existing_user(username)
-      verified = ph.verify(existingUser["password"], password)
+      user = db.get_user(username)
+      verified = ph.verify(user["password"], password)
 
       if verified:
         print(f"{username} verified, logging in...")
-        self.set_username(username)
-        self.set_password(password)
-    
+        self.id = user["id"]
+        self.username = user["username"]
+        self.password = user["password"]
+        self.vaults = db.get_vaults(user["id"])
+        
     except TypeError:
       print("username not on file.")
     except argon2.exceptions.VerifyMismatchError:
       print("password is incorrect.")
+
+  def add_vault(self, vault_name):
+    db.add_vault(self, vault_name)
+    self.vaults = db.get_vaults(self.id)
+
 
 
 

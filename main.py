@@ -16,9 +16,10 @@ while True:
   password = input("Please enter your password:")
   user.login(username, password)
 
-  print("----LOGIN----")
-  username = input("Please enter your username:")
-  password = input("Please enter your password:")
-  user.login(username, password)
+  print("----VAULTS----")
+  name = input("Please enter vault name:")
+  user.add_vault(name)
+  print(user.vaults)
+
 
 
