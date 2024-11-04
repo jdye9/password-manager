@@ -135,9 +135,7 @@ class Database:
         users = list(map(lambda x: x["id"], self.get_users()))
         if user.id in users:
           for vault_change in vault_changes:
-            print(vault_change)
             self.execute('UPDATE vaults SET vault_key = ?, salt = ?, nonce = ?, tag = ? WHERE id = ?;', (vault_change["cipher_text"], vault_change["salt"], vault_change["nonce"], vault_change["tag"], vault_change["id"]))
-          print("HERE")
           hash = ph.hash(new_password)
           self.execute('UPDATE users SET password = ? WHERE id = ?;', (hash, user.id))
           self.commit()
